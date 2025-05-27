@@ -5,6 +5,8 @@ require('dotenv').config();
 
 const app = express();
 
+const projectRoutes = require('../routes/project');
+
 // Middleware
 app.use(cors());
 app.use(express.json()); // for parsing application/json
@@ -13,6 +15,9 @@ app.use(express.json()); // for parsing application/json
 app.get('/', (req, res) => {
   res.send('Server is running...');
 });
+
+// Mount project routes
+app.use('/api/projects', projectRoutes);
 
 // Connect to MongoDB
 const mongoURI = process.env.MONGODB_URI;

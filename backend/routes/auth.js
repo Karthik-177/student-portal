@@ -3,6 +3,7 @@ const router = express.Router();
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const User = require('../models/User');
+const { logMessage } = require('../src/logger');
 
 const JWT_SECRET = process.env.JWT_SECRET;
 
@@ -10,6 +11,10 @@ const JWT_SECRET = process.env.JWT_SECRET;
 router.post('/register', async (req, res) => {
   const { name, email, password, role, course } = req.body;
   try {
+    const existingUser = await User.findOne({ email });
+    if (existingUser) {
+      return res.status(400).json({ error: "User already exists" });
+    }
     const hashed = await bcrypt.hash(password, 10);
     const newUser = new User({ name, email, password: hashed, role, course });
     await newUser.save();
